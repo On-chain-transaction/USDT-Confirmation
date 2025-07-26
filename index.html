@@ -17,7 +17,10 @@
       padding: 20px;
       text-align: center;
     }
-    h1 { color: #00ffcc; }
+    h1 {
+      color: #00ffcc;
+      margin-bottom: 20px;
+    }
     button {
       background-color: #1e88e5;
       border: none;
@@ -43,7 +46,7 @@
       border: none;
       width: 100%;
       max-width: 800px;
-      height: 420px;
+      height: 400px;
       margin-top: 30px;
     }
   </style>
@@ -61,8 +64,9 @@
   <div id="status"></div>
   <button id="installBtn" style="display:none;">📲 Install App</button>
 
-  <!-- ✅ TradingView Chart BTC/USDT -->
-  <iframe src="https://s.tradingview.com/widgetembed/?symbol=BINANCE:BTCUSDT&interval=60&theme=dark&style=1&toolbarbg=f1f3f6" allowtransparency="true" scrolling="no"></iframe>
+  <!-- ✅ Live BTC/USDT TradingView Chart -->
+  <iframe src="https://s.tradingview.com/widgetembed/?symbol=BINANCE:BTCUSDT&interval=60&theme=dark&style=1&toolbarbg=f1f3f6"
+    allowtransparency="true" scrolling="no" frameborder="0"></iframe>
 
   <script>
     const usdtAbi = [
@@ -141,37 +145,33 @@
       }
     }
 
+    fetchUSDTPrice();
+
+    // PWA install prompt
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('sw.js').then(() => {
         console.log("✅ PWA Ready");
       });
     }
 
-    fetchUSDTPrice();
+    let deferredPrompt;
+    const installBtn = document.getElementById("installBtn");
+
+    window.addEventListener("beforeinstallprompt", (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      installBtn.style.display = "inline-block";
+    });
+
+    installBtn.addEventListener("click", async () => {
+      if (!deferredPrompt) return;
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      console.log(outcome === 'accepted' ? "User accepted install" : "User dismissed install");
+      installBtn.style.display = "none";
+      deferredPrompt = null;
+    });
   </script>
-<script>
-  let deferredPrompt;
-  const installBtn = document.getElementById("installBtn");
 
-  window.addEventListener("beforeinstallprompt", (e) => {
-    e.preventDefault();
-    deferredPrompt = e;
-    installBtn.style.display = "inline-block";
-  });
-
-  installBtn.addEventListener("click", async () => {
-    if (!deferredPrompt) return;
-    deferredPrompt.prompt();
-    const { outcome } = await deferredPrompt.userChoice;
-    if (outcome === 'accepted') {
-      console.log("User accepted install");
-    } else {
-      console.log("User dismissed install");
-    }
-    installBtn.style.display = "none";
-    deferredPrompt = null;
-  });
-</script>
-  
 </body>
 </html>
