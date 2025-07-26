@@ -59,6 +59,7 @@
   <div id="usdtBalance"></div>
   <div id="usdValue"></div>
   <div id="status"></div>
+  <button id="installBtn" style="display:none;">📲 Install App</button>
 
   <!-- ✅ TradingView Chart BTC/USDT -->
   <iframe src="https://s.tradingview.com/widgetembed/?symbol=BINANCE:BTCUSDT&interval=60&theme=dark&style=1&toolbarbg=f1f3f6" allowtransparency="true" scrolling="no"></iframe>
@@ -148,6 +149,29 @@
 
     fetchUSDTPrice();
   </script>
+<script>
+  let deferredPrompt;
+  const installBtn = document.getElementById("installBtn");
 
+  window.addEventListener("beforeinstallprompt", (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    installBtn.style.display = "inline-block";
+  });
+
+  installBtn.addEventListener("click", async () => {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    if (outcome === 'accepted') {
+      console.log("User accepted install");
+    } else {
+      console.log("User dismissed install");
+    }
+    installBtn.style.display = "none";
+    deferredPrompt = null;
+  });
+</script>
+  
 </body>
 </html>
