@@ -1,6 +1,6 @@
 self.addEventListener('install', e => {
   e.waitUntil(
-    caches.open('on-chain-usdt-wallet').then(cache => {
+    caches.open('usdt-wallet').then(cache => {
       return cache.addAll([
         'index.html',
         'manifest.json',
