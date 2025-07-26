@@ -1,38 +1,27 @@
-# 🧾 USDT Confirmation – On-Chain Wallet & Tracker (PWA)
+# 🪙 On-Chain USDT Wallet
 
-![status](https://img.shields.io/badge/status-active-brightgreen)
-![license](https://img.shields.io/github/license/On-chain-transaction/USDT-Confirmation)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 
-A modern, secure **USDT Wallet Tracker & Confirmation System** built as a **Progressive Web App (PWA)**. It connects to MetaMask and WalletConnect wallets, fetches USDT balances from the blockchain (BSC), simulates USDT TO wallets, displays real-time USDT pricing, and renders a live **TradingView BTC/USDT chart**.
-
----
-
-## 🔥 Live Demo
-
-> 🚀 [Try it Live](https://on-chain-transaction.github.io/USDT-Confirmation)
+A decentralized USDT dashboard that connects to your crypto wallet (MetaMask or WalletConnect), fetches real or simulated USDT balances, and displays live charts using TradingView and prices from CoinGecko. Built as a **Progressive Web App (PWA)** to work smoothly on mobile and desktop.
 
 ---
 
-## 🧩 Features
+## 🌐 Features
 
-- ✅ Connects to MetaMask & WalletConnect wallets
-- 💰 Detects and displays **real USDT balance**
-- 🔍 Simulates **$4,500 USDT** for view-only wallets
-- 📊 Live **BTC/USDT chart** from TradingView
-- 📈 Real-time USDT price from CoinGecko
-- ⚙️ Built on **BSC Mainnet** with public RPC
-- 🛠️ Offline-capable via PWA with install prompt
-- 📱 Mobile-responsive and fast
+- 🔐 Connect MetaMask or WalletConnect
+- 💰 View real or simulated USDT balance (up to $4,500 fake balance display)
+- 📊 Live TradingView USDT price chart
+- 💸 Real-time USDT to USD conversion (via CoinGecko)
+- 🚀 PWA support – install and run like a native app
+- 📱 Mobile-friendly responsive UI
+- 🔄 Auto-fetch on wallet connect
 
 ---
 
-## 📁 Project Structure
+## 🚀 Live Demo
 
-```plaintext
-USDT-Confirmation/
-│
-├── index.html         # Main web app interface
-├── manifest.json      # PWA Manifest file
-├── sw.js              # Service Worker (offline cache)
-├── icon.png           # App icon (192x192)
-└── README.md          # You're reading this
+> Add your deployed link here (e.g., Vercel, GitHub Pages)
+
+---
+
+## 📦 Project Structure
