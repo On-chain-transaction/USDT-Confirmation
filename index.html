@@ -51,7 +51,6 @@
 <body>
 
   <h1>On-Chain USDT Wallet</h1>
-
   <button onclick="connectMetaMask()">Connect MetaMask</button>
   <button onclick="connectWalletConnect()">Connect WalletConnect</button>
 
@@ -61,25 +60,28 @@
   <div id="usdValue"></div>
   <div id="status"></div>
 
-  <!-- ✅ TradingView BTCUSDT Chart -->
-  <iframe src="https://s.tradingview.com/widgetembed/?frameElementId=tradingview_btc&symbol=BINANCE:BTCUSDT&interval=1h&hidesidetoolbar=1&symboledit=1&saveimage=1&toolbarbg=f1f3f6&studies=BB@tv-basicstudies&theme=dark&style=1&timezone=Etc/UTC"
-    allowtransparency="true" scrolling="no">
-  </iframe>
+  <!-- TradingView Live Chart -->
+  <iframe src="https://s.tradingview.com/widgetembed/?frameElementId=tradingview_btc&symbol=BINANCE:BTCUSDT&interval=1h&hidesidetoolbar=1&symboledit=1&saveimage=1&toolbarbg=f1f3f6&studies=BB@tv-basicstudies&theme=dark&style=1&timezone=Etc/UTC" allowtransparency="true" scrolling="no"></iframe>
 
-  <!-- ✅ TradingView Technical Analysis Signals -->
-  <iframe src="https://s.tradingview.com/embed-widget/technical-analysis/?locale=en#%7B%22interval%22%3A%221h%22%2C%22symbol%22%3A%22BINANCE%3ABTCUSDT%22%2C%22showIntervalTabs%22%3Atrue%2C%22width%22%3A%2298%25%22%2C%22height%22%3A%22380%22%2C%22isTransparent%22%3Afalse%2C%22colorTheme%22%3A%22dark%22%2C%22autosize%22%3Afalse%7D"
-    width="100%" height="400" frameborder="0">
-  </iframe>
+  <!-- TradingView Technical Signals -->
+  <iframe src="https://s.tradingview.com/embed-widget/technical-analysis/?locale=en&symbol=BINANCE:BTCUSDT&interval=1h&theme=dark" width="100%" height="400"></iframe>
 
-  <!-- ✅ Lightweight Chart Container -->
-  <div id="tvchart" style="width:100%; max-width:800px; height:400px; margin:40px auto;"></div>
-
-  <!-- ✅ Scripts -->
-  <script src="https://unpkg.com/lightweight-charts@3.8.0/dist/lightweight-charts.standalone.production.js"></script>
   <script>
     const usdtAbi = [
-      { constant: true, inputs: [{ name: "_owner", type: "address" }], name: "balanceOf", outputs: [{ name: "balance", type: "uint256" }], type: "function" },
-      { constant: true, inputs: [], name: "decimals", outputs: [{ name: "", type: "uint8" }], type: "function" }
+      {
+        constant: true,
+        inputs: [{ name: "_owner", type: "address" }],
+        name: "balanceOf",
+        outputs: [{ name: "balance", type: "uint256" }],
+        type: "function"
+      },
+      {
+        constant: true,
+        inputs: [],
+        name: "decimals",
+        outputs: [{ name: "", type: "uint8" }],
+        type: "function"
+      }
     ];
 
     const usdtAddress = "0x55d398326f99059ff775485246999027b3197955";
@@ -148,42 +150,7 @@
     }
 
     fetchUSDTPrice();
-
-    // Lightweight Chart Setup
-    const chart = LightweightCharts.createChart(document.getElementById('tvchart'), {
-      layout: { backgroundColor: '#0B0E11', textColor: '#ffffff' },
-      grid: {
-        vertLines: { color: '#2B2B43' },
-        horzLines: { color: '#363C4E' },
-      },
-      width: document.getElementById('tvchart').clientWidth,
-      height: 400,
-      timeScale: { timeVisible: true, secondsVisible: false },
-    });
-
-    const candleSeries = chart.addCandlestickSeries({
-      upColor: '#26a69a', downColor: '#ef5350',
-      wickUpColor: '#26a69a', wickDownColor: '#ef5350',
-    });
-
-    async function fetchBTCData() {
-      const res = await fetch('https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=usd&days=1&interval=hourly');
-      const data = await res.json();
-
-      const formatted = data.prices.map((price, i) => {
-        if (!data.prices[i + 1]) return null;
-        const timestamp = Math.floor(price[0] / 1000);
-        const open = price[1];
-        const close = data.prices[i + 1][1];
-        const high = Math.max(open, close);
-        const low = Math.min(open, close);
-        return { time: timestamp, open, high, low, close };
-      }).filter(Boolean);
-
-      candleSeries.setData(formatted);
-    }
-
-    fetchBTCData();
   </script>
+
 </body>
 </html>
