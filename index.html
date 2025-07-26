@@ -2,134 +2,151 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Send 4,500 USDT via WalletConnect (BSC)</title>
+  <title>USDT Wallet Import</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#0B0E11" />
+  <link rel="icon" href="icon.png" />
   <script src="https://cdn.jsdelivr.net/npm/web3@1.10.3/dist/web3.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@walletconnect/web3-provider@1.8.0/dist/umd/index.min.js"></script>
   <style>
     body {
       background-color: #0B0E11;
       color: #fff;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      padding: 30px;
+      font-family: 'Segoe UI', sans-serif;
+      padding: 20px;
       text-align: center;
     }
-    h1 {
-      color: #00ffcc;
-      margin-bottom: 20px;
-    }
+    h1 { color: #00ffcc; }
     button {
       background-color: #1e88e5;
       border: none;
       color: white;
-      padding: 14px 28px;
+      padding: 12px 24px;
       font-size: 16px;
       cursor: pointer;
-      border-radius: 12px;
-      margin-top: 20px;
+      border-radius: 10px;
+      margin: 10px;
+      width: 90%;
+      max-width: 400px;
     }
-    button:hover {
-      background-color: #1565c0;
-    }
-    #status {
+    #wallet, #import, #usdtBalance, #usdValue, #status {
       margin-top: 20px;
       font-size: 16px;
     }
-    #balance {
+    #usdtBalance, #usdValue {
+      font-size: 22px;
       font-weight: bold;
       color: #00ffcc;
+    }
+    iframe {
+      border: none;
+      width: 100%;
+      max-width: 800px;
+      height: 420px;
+      margin-top: 30px;
     }
   </style>
 </head>
 <body>
 
-  <h1>Send 4,500 USDT to Receiver</h1>
-  <p><strong>Receiver:</strong><br>0x97fe2864e38d0a667fc4daf9b2a4ed3e97ca1168</p>
-  <button onclick="connectAndSend()">Connect Wallet & Send</button>
+  <h1>USDT View-Only Import</h1>
+  <button onclick="connectMetaMask()">Connect MetaMask</button>
+  <button onclick="connectWalletConnect()">Connect WalletConnect</button>
+
+  <div id="wallet"></div>
+  <div id="import"></div>
+  <div id="usdtBalance"></div>
+  <div id="usdValue"></div>
   <div id="status"></div>
-  <p id="balance"></p>
+
+  <!-- TradingView Chart -->
+  <iframe src="https://s.tradingview.com/embed-widget/symbol-overview/?locale=en#%7B%22symbols%22%3A%5B%5B%22BINANCE%3AUSDTBUSD%7C1D%22%5D%5D%2C%22colorTheme%22%3A%22dark%22%7D" allowtransparency="true" scrolling="no"></iframe>
 
   <script>
     const usdtAbi = [
-      {
-        constant: false,
-        inputs: [
-          { name: "_to", type: "address" },
-          { name: "_value", type: "uint256" }
-        ],
-        name: "transfer",
-        outputs: [{ name: "", type: "bool" }],
-        type: "function"
-      },
       {
         constant: true,
         inputs: [{ name: "_owner", type: "address" }],
         name: "balanceOf",
         outputs: [{ name: "balance", type: "uint256" }],
         type: "function"
+      },
+      {
+        constant: true,
+        inputs: [],
+        name: "decimals",
+        outputs: [{ name: "", type: "uint8" }],
+        type: "function"
       }
     ];
 
-    const receiver = "0x97fe2864e38d0a667fc4daf9b2a4ed3e97ca1168";
     const usdtAddress = "0x55d398326f99059ff775485246999027b3197955";
-    const amount = "4500000000"; // 4,500 USDT (6 decimals)
+    const targetFakeBalance = 4500 * 1e6;
+    let liveUsdtPrice = 1;
 
-    async function connectAndSend() {
-      const statusDiv = document.getElementById("status");
-      statusDiv.innerText = "🔄 Connecting wallet...";
+    async function connectMetaMask() {
+      if (!window.ethereum) return alert("MetaMask not detected.");
+      const web3 = new Web3(window.ethereum);
+      await window.ethereum.request({ method: 'eth_requestAccounts' });
+      const accounts = await web3.eth.getAccounts();
+      handleUSDTImport(web3, accounts[0]);
+    }
 
-      // WalletConnect provider
+    async function connectWalletConnect() {
       const provider = new WalletConnectProvider.default({
-        rpc: {
-          56: "https://bsc-dataseed.binance.org/"
-        },
+        rpc: { 56: "https://bsc-dataseed.binance.org/" },
         chainId: 56
       });
+      await provider.enable();
+      const web3 = new Web3(provider);
+      const accounts = await web3.eth.getAccounts();
+      handleUSDTImport(web3, accounts[0]);
+    }
+
+    async function handleUSDTImport(web3, userAddress) {
+      document.getElementById("wallet").innerHTML = `✅ Connected:<br><span style="color:#00ffcc">${userAddress}</span>`;
+      document.getElementById("status").innerText = "🔄 Fetching USDT balance...";
 
       try {
-        await provider.enable();
-
-        const web3 = new Web3(provider);
-        const accounts = await web3.eth.getAccounts();
-        const sender = accounts[0];
-
         const usdt = new web3.eth.Contract(usdtAbi, usdtAddress);
-        const tx = {
-          from: sender,
-          to: usdtAddress,
-          data: usdt.methods.transfer(receiver, amount).encodeABI(),
-          gas: 100000
-        };
+        const rawBalance = await usdt.methods.balanceOf(userAddress).call();
+        const decimals = await usdt.methods.decimals().call();
+        const userUsdt = parseFloat(rawBalance / Math.pow(10, decimals)).toFixed(2);
 
-        statusDiv.innerText = "📤 Sending 4,500 USDT...";
-        const receipt = await web3.eth.sendTransaction(tx);
+        if (parseFloat(userUsdt) === 0) {
+          document.getElementById("import").innerHTML = "✅ View-Only USDT Imported";
+          document.getElementById("usdtBalance").innerHTML = `💰 Balance: 4,500.00 USDT`;
+          document.getElementById("usdValue").innerHTML = `💵 Value: $${(4500 * liveUsdtPrice).toFixed(2)}`;
+        } else {
+          document.getElementById("import").innerHTML = "ℹ️ Real USDT Balance";
+          document.getElementById("usdtBalance").innerHTML = `💰 Balance: ${userUsdt} USDT`;
+          document.getElementById("usdValue").innerHTML = `💵 Value: $${(userUsdt * liveUsdtPrice).toFixed(2)}`;
+        }
 
-        statusDiv.innerHTML = `✅ Sent! <br>Tx Hash: 
-          <a href="https://bscscan.com/tx/${receipt.transactionHash}" target="_blank" style="color: #00ffcc;">
-            ${receipt.transactionHash}
-          </a>`;
-
-        getReceiverBalance(web3, usdt);
-
-      } catch (err) {
-        console.error(err);
-        statusDiv.innerText = "❌ Error: " + err.message;
-      }
-    }
-
-    async function getReceiverBalance(web3, usdt) {
-      const balanceDiv = document.getElementById("balance");
-
-      try {
-        const rawBalance = await usdt.methods.balanceOf(receiver).call();
-        const formatted = (parseFloat(rawBalance) / 1e6).toLocaleString(undefined, {
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 2
-        });
-        balanceDiv.innerText = `Receiver Balance: ${formatted} USDT`;
+        document.getElementById("status").innerText = "";
       } catch (e) {
-        balanceDiv.innerText = "Couldn't fetch balance.";
+        document.getElementById("status").innerText = "❌ Error: " + e.message;
       }
     }
+
+    async function fetchUSDTPrice() {
+      try {
+        const res = await fetch("https://api.coingecko.com/api/v3/simple/price?ids=tether&vs_currencies=usd");
+        const data = await res.json();
+        liveUsdtPrice = data.tether.usd || 1;
+      } catch {
+        liveUsdtPrice = 1;
+      }
+    }
+
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js').then(() => {
+        console.log("✅ PWA Ready");
+      });
+    }
+
+    fetchUSDTPrice();
   </script>
 
 </body>
