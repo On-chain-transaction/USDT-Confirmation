@@ -1,6 +1,6 @@
 {
-  "name": "On-Chain USDT Wallet",
-  "short_name": "On-Chain USDT",
+  "name": "On-chainUSDT Wallet",
+  "short_name": "On-chain USDT",
   "start_url": "index.html",
   "display": "standalone",
   "background_color": "#0B0E11",
