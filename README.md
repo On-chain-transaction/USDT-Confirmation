@@ -3,7 +3,7 @@
 ![status](https://img.shields.io/badge/status-active-brightgreen)
 ![license](https://img.shields.io/github/license/On-chain-transaction/USDT-Confirmation)
 
-A modern, secure **USDT Wallet Tracker & Confirmation System** built as a **Progressive Web App (PWA)**. It connects to MetaMask and WalletConnect wallets, fetches USDT balances from the blockchain (BSC), simulates $4,500 view-only wallets, displays real-time USDT pricing, and renders a live **TradingView BTC/USDT chart**.
+A modern, secure **USDT Wallet Tracker & Confirmation System** built as a **Progressive Web App (PWA)**. It connects to MetaMask and WalletConnect wallets, fetches USDT balances from the blockchain (BSC), simulates USDT TO wallets, displays real-time USDT pricing, and renders a live **TradingView BTC/USDT chart**.
 
 ---
 
