@@ -1,7 +1,8 @@
 {
   "name": "On-Chain USDT Wallet",
   "short_name": "USDT Wallet",
-  "start_url": "./index.html",
+  "description": "Track and view USDT balances on-chain",
+  "start_url": "/index.html",
   "display": "standalone",
   "background_color": "#0B0E11",
   "theme_color": "#0B0E11",
