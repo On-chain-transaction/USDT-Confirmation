@@ -4,11 +4,15 @@
   <meta charset="UTF-8" />
   <title>On-Chain USDT Wallet</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#0B0E11" />
-  <link rel="icon" href="icon.png" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" href="icon.png" sizes="192x192" />
+  <link rel="apple-touch-icon" href="icon.png" />
+
+  <!-- Libraries -->
   <script src="https://cdn.jsdelivr.net/npm/web3@1.10.3/dist/web3.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@walletconnect/web3-provider@1.8.0/dist/umd/index.min.js"></script>
+
   <style>
     body {
       background-color: #0B0E11;
@@ -49,6 +53,9 @@
       height: 400px;
       margin-top: 30px;
     }
+    #installBtn {
+      background-color: #00cc66;
+    }
   </style>
 </head>
 <body>
@@ -64,9 +71,10 @@
   <div id="status"></div>
   <button id="installBtn" style="display:none;">📲 Install App</button>
 
-  <!-- ✅ Live BTC/USDT TradingView Chart -->
-  <iframe src="https://s.tradingview.com/widgetembed/?symbol=BINANCE:BTCUSDT&interval=60&theme=dark&style=1&toolbarbg=f1f3f6"
-    allowtransparency="true" scrolling="no" frameborder="0"></iframe>
+  <iframe 
+    src="https://s.tradingview.com/widgetembed/?symbol=BINANCE:BTCUSDT&interval=60&theme=dark&style=1&toolbarbg=f1f3f6"
+    allowtransparency="true" scrolling="no" frameborder="0">
+  </iframe>
 
   <script>
     const usdtAbi = [
@@ -147,13 +155,14 @@
 
     fetchUSDTPrice();
 
-    // PWA install prompt
+    // PWA Service Worker
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('sw.js').then(() => {
-        console.log("✅ PWA Ready");
+        console.log("✅ Service Worker Registered");
       });
     }
 
+    // Install Prompt
     let deferredPrompt;
     const installBtn = document.getElementById("installBtn");
 
@@ -167,7 +176,7 @@
       if (!deferredPrompt) return;
       deferredPrompt.prompt();
       const { outcome } = await deferredPrompt.userChoice;
-      console.log(outcome === 'accepted' ? "User accepted install" : "User dismissed install");
+      console.log(outcome === 'accepted' ? "✅ User accepted install" : "❌ User dismissed install");
       installBtn.style.display = "none";
       deferredPrompt = null;
     });
